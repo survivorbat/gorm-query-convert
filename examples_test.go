@@ -14,6 +14,8 @@ func ExampleNew() {
 		LessThanPrefix:         "<",
 		LessOrEqualToPrefix:    "<=",
 		NotEqualToPrefix:       "!=",
+		LikePrefix:             "~",
+		NotLikePrefix:          "!~",
 	}
 
 	_ = db.Use(New(config))

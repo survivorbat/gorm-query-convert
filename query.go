@@ -58,6 +58,14 @@ func (d *gormQonvert) queryCallback(db *gorm.DB) {
 				condition = fmt.Sprintf("%s != ?", cond.Column)
 				value = value[len(d.config.NotEqualToPrefix):]
 
+			case d.config.LikePrefix != "" && strings.HasPrefix(value, d.config.LikePrefix):
+				condition = fmt.Sprintf("%s LIKE ?", cond.Column)
+				value = value[len(d.config.LikePrefix):]
+
+			case d.config.NotLikePrefix != "" && strings.HasPrefix(value, d.config.NotLikePrefix):
+				condition = fmt.Sprintf("%s NOT LIKE ?", cond.Column)
+				value = value[len(d.config.NotLikePrefix):]
+
 			default:
 				continue
 			}
@@ -97,6 +105,14 @@ func (d *gormQonvert) queryCallback(db *gorm.DB) {
 				case d.config.NotEqualToPrefix != "" && strings.HasPrefix(value, d.config.NotEqualToPrefix):
 					condition = fmt.Sprintf("%s != ?", cond.Column)
 					value = value[len(d.config.NotEqualToPrefix):]
+
+				case d.config.LikePrefix != "" && strings.HasPrefix(value, d.config.LikePrefix):
+					condition = fmt.Sprintf("%s LIKE ?", cond.Column)
+					value = value[len(d.config.LikePrefix):]
+
+				case d.config.NotLikePrefix != "" && strings.HasPrefix(value, d.config.NotLikePrefix):
+					condition = fmt.Sprintf("%s NOT LIKE ?", cond.Column)
+					value = value[len(d.config.NotLikePrefix):]
 
 				default:
 					continue

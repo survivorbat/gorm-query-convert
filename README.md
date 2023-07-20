@@ -2,7 +2,17 @@
 
 [![Go package](https://github.com/survivorbat/gorm-query-convert/actions/workflows/test.yaml/badge.svg)](https://github.com/survivorbat/gorm-query-convert/actions/workflows/test.yaml)
 
-I wanted to provide a map to a WHERE query and automatically convert queries to different operators if characters were present.
+Laziness rules, why write GORM queries if you can simply add prefixes to a `map[string]any`'s values and automatically
+convert queries to use different operators. All prefix characters can be custom-defined and are only enabled if you define them.
+The currently supported queries are:
+
+- `WHERE x != y`
+- `WHERE x >= y`
+- `WHERE x > y`
+- `WHERE x <= y`
+- `WHERE x < y`
+- `WHERE x LIKE y`
+- `WHERE x NOT LIKE y`
 
 By default, all queries are converted, if you want it to be more specific use:
 
@@ -26,7 +36,15 @@ import (
 
 func main() {
 	db, _ := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	config := gormqonvert.CharacterConfig{}
+	config := gormqonvert.CharacterConfig{
+		GreaterThanPrefix:      ">",
+		GreaterOrEqualToPrefix: ">=",
+		LessThanPrefix:         "<",
+		LessOrEqualToPrefix:    "<=",
+		NotEqualToPrefix:       "!=",
+		LikePrefix:             "~",
+		NotLikePrefix:          "!~",
+    }
 	db.Use(gormqonvert.New(config))
 }
 

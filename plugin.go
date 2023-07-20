@@ -17,6 +17,8 @@ type CharacterConfig struct {
 	LessThanPrefix         string
 	LessOrEqualToPrefix    string
 	NotEqualToPrefix       string
+	LikePrefix             string
+	NotLikePrefix          string
 }
 
 // SettingOnly makes it so that only queries with the setting 'gormQonvert' set to true can be turned into LIKE queries.

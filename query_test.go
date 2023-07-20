@@ -105,6 +105,22 @@ func TestGormQonvert_Initialize_TriggersConversionCorrectly(t *testing.T) {
 			existing: []ObjectA{{Name: "jessica", Age: 29}, {Name: "amy", Age: 30}, {Name: "boris", Age: 31}},
 			expected: []ObjectA{{Name: "jessica", Age: 29}},
 		},
+		"like value": {
+			filter: []map[string]any{{
+				"name": "~%i%",
+			}},
+			query:    defaultQuery,
+			existing: []ObjectA{{Name: "jessica", Age: 29}, {Name: "amy", Age: 30}, {Name: "boris", Age: 31}},
+			expected: []ObjectA{{Name: "jessica", Age: 29}, {Name: "boris", Age: 31}},
+		},
+		"not like value": {
+			filter: []map[string]any{{
+				"name": "!~%a%",
+			}},
+			query:    defaultQuery,
+			existing: []ObjectA{{Name: "jessica", Age: 29}, {Name: "amy", Age: 30}, {Name: "boris", Age: 31}},
+			expected: []ObjectA{{Name: "boris", Age: 31}},
+		},
 		"not equal to value": {
 			filter: []map[string]any{{
 				"age": "!=30",
@@ -162,6 +178,49 @@ func TestGormQonvert_Initialize_TriggersConversionCorrectly(t *testing.T) {
 			query:    defaultQuery,
 			existing: []ObjectA{{Name: "joris", Date: time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)}, {Name: "dane", Date: time.Date(2022, 1, 2, 0, 0, 0, 0, time.UTC)}},
 			expected: []ObjectA{{Name: "joris", Date: time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)}},
+		},
+		"like multiple values": {
+			filter: []map[string]any{{
+				"name": []string{"~%ssica", "~a_y"},
+			}},
+			query:    defaultQuery,
+			existing: []ObjectA{{Name: "jessica", Age: 29}, {Name: "amy", Age: 30}, {Name: "boris", Age: 31}},
+			expected: []ObjectA{{Name: "jessica", Age: 29}, {Name: "amy", Age: 30}},
+		},
+		"not like multiple values": {
+			filter: []map[string]any{
+				{
+					"name": []string{"!~%ss%"},
+				}, {
+					"name": []string{"!~%ris%"},
+				},
+			},
+			query:    defaultQuery,
+			existing: []ObjectA{{Name: "jessica", Age: 29}, {Name: "amy", Age: 30}, {Name: "boris", Age: 31}},
+			expected: []ObjectA{{Name: "amy", Age: 30}},
+		},
+
+		"almost everything really": {
+			filter: []map[string]any{
+				{
+					"name": []string{"!~%bor%"},
+					"age":  []string{"<30"},
+				}, {
+					"name": []string{"~%ss%"},
+					"age":  []string{"!=30"},
+				},
+				{
+					"age": "!=28",
+				},
+			},
+			query: defaultQuery,
+			existing: []ObjectA{
+				{Name: "jessica", Age: 28},
+				{Name: "jessica", Age: 29},
+				{Name: "jessica", Age: 30},
+				{Name: "boris", Age: 25},
+			},
+			expected: []ObjectA{{Name: "jessica", Age: 29}},
 		},
 
 		// With existing query
@@ -231,6 +290,8 @@ func TestGormQonvert_Initialize_TriggersConversionCorrectly(t *testing.T) {
 				LessThanPrefix:         "<",
 				LessOrEqualToPrefix:    "<=",
 				NotEqualToPrefix:       "!=",
+				LikePrefix:             "~",
+				NotLikePrefix:          "!~",
 			}
 
 			plugin := New(config, testData.options...)
@@ -329,6 +390,8 @@ func TestGormQonvert_Initialize_TriggersConversionCorrectlyWithSetting(t *testin
 				LessThanPrefix:         "<",
 				LessOrEqualToPrefix:    "<=",
 				NotEqualToPrefix:       "!=",
+				LikePrefix:             "~",
+				NotLikePrefix:          "!~",
 			}
 
 			plugin := New(config, SettingOnly())
