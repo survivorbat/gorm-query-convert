@@ -21,6 +21,13 @@ By default, all queries are converted, if you want it to be more specific use:
 If you want a particular query to not be converted, use `.Set("gormqonvert", false)`. This works
 regardless of configuration.
 
+## 💡 Related Libraries 
+
+- [deepgorm](https://github.com/survivorbat/gorm-deep-filtering) turns nested maps in WHERE-calls into subqueries
+- [gormlike](https://github.com/survivorbat/gorm-like) turns WHERE-calls into LIkE queries if certain tokens were found
+- [gormcase](https://github.com/survivorbat/gorm-case) adds case insensitivity to WHERE queries
+- [gormtestutil](https://github.com/ing-bank/gormtestutil) provides easy utility methods for unit-testing with gorm
+
 ## ⬇️ Installation
 
 `go get github.com/survivorbat/gorm-query-convert`
